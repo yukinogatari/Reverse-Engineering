@@ -1,0 +1,54 @@
+*
+
+# I'm too lazy to reorganize my folder, so I'm doing this whitelist style.
+!/.gitignore
+!/README.md
+!/COPYING
+
+!/7th Chord/
+!/7th Chord/README.md
+!/7th Chord/util.py
+!/7th Chord/l7c_dec.py
+!/7th Chord/l7c_ex.py
+
+!/Persona 5/
+!/Persona 5/README.md
+!/Persona 5/util.py
+!/Persona 5/p5_unpack.py
+
+!/Rose and the Old Castle of Twilight/
+!/Rose and the Old Castle of Twilight/README.md
+!/Rose and the Old Castle of Twilight/util.py
+!/Rose and the Old Castle of Twilight/dsarc_ex.py
+!/Rose and the Old Castle of Twilight/fad_ex.py
+!/Rose and the Old Castle of Twilight/nis_dec.py
+!/Rose and the Old Castle of Twilight/swizzle.py
+
+!/Lego/
+!/Lego/README.md
+!/Lego/util.py
+!/Lego/fib_dec.py
+!/Lego/fib_ex.py
+
+!/Sly Cooper/
+!/Sly Cooper/README.md
+!/Sly Cooper/util.py
+!/Sly Cooper/sly_dec.py
+
+!/Erogos/
+!/Erogos/README.md
+!/Erogos/util.py
+!/Erogos/erogos_dat.py
+!/Erogos/erogos_img.py
+!/Erogos/erogos_keys.py
+
+!/HyPack/
+!/HyPack/README.md
+!/HyPack/util.py
+!/HyPack/hypack_ex.py
+
+!/PARTICLE/
+!/PARTICLE/README.md
+!/PARTICLE/util.py
+!/PARTICLE/epa_conv.py
+!/PARTICLE/lyrs_ex.py
