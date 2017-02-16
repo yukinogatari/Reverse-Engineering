@@ -21,7 +21,7 @@ used in the file headers appear to shuffle around a bit between games.
 
 For a (little) more accuracy, you can provide the fib_ex function with the
 platform the .fib file was obtained from, and it will try to use that information
-to better guess the correct file extension, however 
+to better guess the correct file extension.
 
 Image data is assigned the mostly arbitrary extension of .lga and should be
 supported by [Scarlet](https://github.com/xdanieldzd/Scarlet) in the near future.
