@@ -30,7 +30,30 @@ def fib_ex(filename, out_dir = None, platform = None):
   if os.path.isfile(csv_file):
     with open(csv_file, "rb") as f:
       reader = csv.reader(f)
-      file_names = {int(offset, 16): fn for hash, fn, length, offset in reader}
+      
+      # Not all csv files are structured the same, so handle what we know how to.
+      for row in reader:
+        
+        # LEGO City Undercover (3DS)
+        if len(row) == 5:
+          hash, fn, cmp_size, dec_size, offset = row
+          
+        # LEGO Pirates of the Caribbean (3DS)
+        # LEGO Harry Potter: Years 5-7 (3DS)
+        elif len(row) == 4:
+          hash, fn, dec_size, offset = row
+        
+        else:
+          raise Exception("Unsupported CSV file.")
+        
+        # Some csv files have column names in the first row, some don't.
+        # If we can convert the offset from base 16, it's probably legit.
+        try:
+          offset = int(offset, 16)
+        except ValueError:
+          continue
+        
+        file_names[offset] = fn
   
   f = BinaryFile(filename, "rb")
   fib_ex_data(f, out_dir, file_names)
@@ -185,7 +208,7 @@ def fib_ex_data(f, out_dir, file_names = {}, platform = None):
 if __name__ == "__main__":
   # fib_ex("LEGO Pirates of the Caribbean (3DS)/legopirates3ds.fib", "ex/legopirates3ds", platform = PLATFORM_3DS)
   # fib_ex("LEGO Harry Potter - Years 5-7 (3DS)/lego_hp2_3ds.fib", "ex/lego_hp2_3ds", platform = PLATFORM_3DS)
-  fib_ex("LEGO Harry Potter - Years 1-4 (PSP)/USRDIR/legoharrypotterpsp.fib", "ex/legoharrypotterpsp")
+  # fib_ex("LEGO Harry Potter - Years 1-4 (PSP)/USRDIR/legoharrypotterpsp.fib", "ex/legoharrypotterpsp")
   # fib_ex("LEGO Harry Potter - Years 5-7 (PSP)/USRDIR/lego_hp2_psp.fib", "ex/lego_hp2_psp")
   # fib_ex("LEGO Star Wars III - The Clone Wars (3DS)/legostarwarsclonewars3ds.fib", "ex/legostarwarsclonewars3ds", platform = PLATFORM_3DS)
   # fib_ex("LEGO Star Wars III - The Clone Wars (PSP)/USRDIR/legostarwarsclonewarspsp.fib", "ex/legostarwarsclonewarspsp")
@@ -194,5 +217,6 @@ if __name__ == "__main__":
   # fib_ex("LEGO Batman 3 - Beyond Gotham (3DS)/dialogue_uk.fib", "ex/dialogue_uk", platform = PLATFORM_3DS)
   # fib_ex("LEGO Movie (Vita)/lego_emmet_psp2.fib", "ex/lego_emmet_psp2", platform = PLATFORM_VITA)
   # fib_ex("LEGO Movie (Vita)/prebuiltshaders_psp2.fib", "ex/prebuiltshaders_psp2", platform = PLATFORM_VITA)
+  fib_ex("test.fib")
 
 ### EOF ###
