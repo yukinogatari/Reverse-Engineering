@@ -29,6 +29,8 @@
 !/Lego/util.py
 !/Lego/fib_dec.py
 !/Lego/fib_ex.py
+!/Lego/guess_ext.py
+!/Lego/platforms.py
 
 !/Sly Cooper/
 !/Sly Cooper/README.md
@@ -42,10 +44,10 @@
 !/Erogos/erogos_img.py
 !/Erogos/erogos_keys.py
 
-!/HyPack/
-!/HyPack/README.md
-!/HyPack/util.py
-!/HyPack/hypack_ex.py
+!/Kogado/
+!/Kogado/README.md
+!/Kogado/util.py
+!/Kogado/hypack_ex.py
 
 !/PARTICLE/
 !/PARTICLE/README.md

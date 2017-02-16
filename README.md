@@ -2,7 +2,9 @@
 
 ## About
 
-A dumping ground for all the miscellaneous reverse engineering I've done. Mostly video game file formats, largely to help [Ehm](https://twitter.com/OtherEhm) with [TCRF](https://tcrf.net/The_Cutting_Room_Floor) research, but sometimes just to satisfy my own curiosity.
+A dumping ground for all the miscellaneous reverse engineering I've done. Mostly video game file formats, in large part to help [Ehm](https://twitter.com/OtherEhm) with [TCRF](https://tcrf.net/The_Cutting_Room_Floor) research, but sometimes just to satisfy my own curiosity.
+
+There's undoubtedly stuff here (like the HyPack extractor) that other people have already reverse-engineered independently of (and more thoroughly than) me. About half of my work is driven by curiosity, so I'm not particularly concerned with whether I'm reinventing the wheel. I just wanna break stuff apart and see how it works.
 
 Danganronpa-related scripts can be found in their own repository [here](https://github.com/BlackDragonHunt/Danganronpa-Tools).
 

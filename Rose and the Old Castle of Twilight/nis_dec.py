@@ -9,7 +9,7 @@ import os
 
 from util import *
 
-DEC_DEBUG = False
+DEBUG = False
 
 def nis_dec(data):
   
@@ -34,10 +34,13 @@ def nis_dec(data):
     bit2 = b & 0b01000000
     bit3 = b & 0b00100000
     
+    if DEBUG:
+      print "[0x%04X, 0x%06X]" % (p - 1, len(res)),
+    
     # Raw data.
     if not bit1:
-      if DEC_DEBUG:
-        print "[0x%04X, 0x%06X]" % (p - 1, len(res)), "Raw bytes:", "%02X" % b
+      if DEBUG:
+        print "Raw bytes:", "%02X" % b
         for x in data[p : p + b]: print "%02X" % (x),
         print
         print
@@ -48,8 +51,8 @@ def nis_dec(data):
     
     else:
       
-      if DEC_DEBUG:
-        print "[0x%04X, 0x%06X]" % (p - 1, len(res)), "Copy back:", "%02X" % b,
+      if DEBUG:
+        print "Copy back:", "%02X" % b,
       
       if b >= 0x80 and b < 0xC0:
         # count = ((b & 0b00110000) >> 4) + 1
@@ -60,7 +63,7 @@ def nis_dec(data):
         b2 = data[p]
         p += 1
         
-        if DEC_DEBUG:
+        if DEBUG:
           print "%02X" % b2,
         
         # count = (b & 0b00011111) + 2
@@ -72,20 +75,21 @@ def nis_dec(data):
         b3 = data[p + 1]
         p += 2
         
-        if DEC_DEBUG:
+        if DEBUG:
           print "%02X" % b2, "%02X" % b3,
           
         count  = ((b - 0xE0) << 4) + (b2 >> 4) + 3
         offset = ((b2 & 0b00001111) << 8) + b3 + 1
       
-      if DEC_DEBUG:
+      if DEBUG:
         print "|", count, offset
       
       for i in range(count):
         res.append(res[-offset])
-        if DEC_DEBUG:
+        if DEBUG:
           print "%02X" % (res[-1]),
-      if DEC_DEBUG:
+      
+      if DEBUG:
         print
         print
   

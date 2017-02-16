@@ -10,7 +10,7 @@ from util import BinaryFile
 
 HYPACK_MAGIC = "HyPack\0"
 
-def extract_hypack(in_file, out_dir = None):
+def hypack_ex(in_file, out_dir = None):
   
   if not out_dir:
     out_dir = os.path.splitext(in_file)[0]
@@ -58,10 +58,10 @@ def extract_hypack(in_file, out_dir = None):
       f2.write(data)
 
 if __name__ == "__main__":
-  extract_hypack(u"Shirokoi/EvBG.pak")
-  extract_hypack(u"Shirokoi/EvCG.pak")
-  extract_hypack(u"Shirokoi/EvSE.pak")
-  extract_hypack(u"Shirokoi/Script.pak")
-  extract_hypack(u"Shirokoi/Game.pak")
+  hypack_ex(u"Shirokoi/EvBG.pak")
+  hypack_ex(u"Shirokoi/EvCG.pak")
+  hypack_ex(u"Shirokoi/EvSE.pak")
+  hypack_ex(u"Shirokoi/Script.pak")
+  hypack_ex(u"Shirokoi/Game.pak")
 
 ### EOF ###

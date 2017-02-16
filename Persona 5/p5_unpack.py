@@ -30,16 +30,23 @@ def glz_dec(data):
   
   # print "Marker: 0x%02X" % marker
   
+  # So basically, this is an LZ77-esque algorithm where all bytes are literals by
+  # default, unless that byte is the "marker" byte (which varies between files--
+  # presumably the value that occurs least frequently in the data), in which
+  # case the subsequent byte is the offset to read back, followed by the count.
+  # 
+  # To allow the marker byte to actually be used as part of the data, two
+  # consecutive occurrences become one literal. And to allow the marker value
+  # to be used as an offset, values above it are shifted down by 1, effectively
+  # limiting the read-back range to 0xFE.
   while p < len(data):
     b = data[p]
     p += 1
     
-    # This is the dumbest compression algorithm I've ever seen.
     if b == marker:
       offset = data[p]
       p += 1
       
-      # Because we need some way to use the marker as part of the data...
       if offset == marker:
         res.append(marker)
         continue
@@ -49,7 +56,6 @@ def glz_dec(data):
       
       # print "[0x%08X][0x%08X] Read: 0x%02X %s 0x%02X" % (p, len(res), offset, bin(offset), count)
       
-      # And because we need a way to to use the marker value as an offset...
       if offset > marker:
         offset -= 1
       
