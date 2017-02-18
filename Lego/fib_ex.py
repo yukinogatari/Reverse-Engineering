@@ -126,9 +126,10 @@ def fib_ex_data(f, out_dir, file_names = {}, platform = None):
   
   for hash, fn, dec_size, offset in file_list:
     
-    # print fn
-    if DEBUG and not offset == f.tell():
-      print "    ##########"
+    if DEBUG:
+      print fn
+      if not offset == f.tell():
+        print "    ##########"
     
     f.seek(offset)
     dec = bytearray()
@@ -190,10 +191,13 @@ def fib_ex_data(f, out_dir, file_names = {}, platform = None):
     
     # Keep our existing extension if we have one,
     # except images/audio, which don't use useful extensions.
-    if os.path.splitext(fn)[1].lower() in [DEFAULT_EXT, ".png", ".tga", ".wav"]:
+    if os.path.splitext(fn)[1].lower() in [DEFAULT_EXT, ".btga", ".bpng", ".bdds", ".png", ".tga", ".wav"]:
       ext = guess_ext(dec, platform)
       if ext:
         fn = os.path.splitext(fn)[0] + ext
+    
+    if not DEBUG:
+      print fn
     
     out_file = os.path.join(out_dir, fn)
     
@@ -208,7 +212,7 @@ def fib_ex_data(f, out_dir, file_names = {}, platform = None):
 if __name__ == "__main__":
   # fib_ex("LEGO Pirates of the Caribbean (3DS)/legopirates3ds.fib", "ex/legopirates3ds", platform = PLATFORM_3DS)
   # fib_ex("LEGO Harry Potter - Years 5-7 (3DS)/lego_hp2_3ds.fib", "ex/lego_hp2_3ds", platform = PLATFORM_3DS)
-  # fib_ex("LEGO Harry Potter - Years 1-4 (PSP)/USRDIR/legoharrypotterpsp.fib", "ex/legoharrypotterpsp")
+  fib_ex("LEGO Harry Potter - Years 1-4 (PSP)/USRDIR/legoharrypotterpsp.fib", "ex/legoharrypotterpsp")
   # fib_ex("LEGO Harry Potter - Years 5-7 (PSP)/USRDIR/lego_hp2_psp.fib", "ex/lego_hp2_psp")
   # fib_ex("LEGO Star Wars III - The Clone Wars (3DS)/legostarwarsclonewars3ds.fib", "ex/legostarwarsclonewars3ds", platform = PLATFORM_3DS)
   # fib_ex("LEGO Star Wars III - The Clone Wars (PSP)/USRDIR/legostarwarsclonewarspsp.fib", "ex/legostarwarsclonewarspsp")
@@ -217,6 +221,6 @@ if __name__ == "__main__":
   # fib_ex("LEGO Batman 3 - Beyond Gotham (3DS)/dialogue_uk.fib", "ex/dialogue_uk", platform = PLATFORM_3DS)
   # fib_ex("LEGO Movie (Vita)/lego_emmet_psp2.fib", "ex/lego_emmet_psp2", platform = PLATFORM_VITA)
   # fib_ex("LEGO Movie (Vita)/prebuiltshaders_psp2.fib", "ex/prebuiltshaders_psp2", platform = PLATFORM_VITA)
-  fib_ex("test.fib")
+  # fib_ex("test.fib")
 
 ### EOF ###
