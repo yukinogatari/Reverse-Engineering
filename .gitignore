@@ -16,19 +16,21 @@
 !/Persona 5/util.py
 !/Persona 5/p5_unpack.py
 
-!/Rose and the Old Castle of Twilight/
-!/Rose and the Old Castle of Twilight/README.md
-!/Rose and the Old Castle of Twilight/util.py
-!/Rose and the Old Castle of Twilight/dsarc_ex.py
-!/Rose and the Old Castle of Twilight/fad_ex.py
-!/Rose and the Old Castle of Twilight/nis_dec.py
-!/Rose and the Old Castle of Twilight/swizzle.py
+!/Rose Twilight/
+!/Rose Twilight/README.md
+!/Rose Twilight/util.py
+!/Rose Twilight/dsarc_ex.py
+!/Rose Twilight/fad_ex.py
+!/Rose Twilight/nis_dec.py
+!/Rose Twilight/swizzle.py
 
 !/Lego/
 !/Lego/README.md
 !/Lego/util.py
 !/Lego/fib_dec.py
 !/Lego/fib_ex.py
+!/Lego/hog_dec.py
+!/Lego/hog_ex.py
 !/Lego/guess_ext.py
 !/Lego/platforms.py
 

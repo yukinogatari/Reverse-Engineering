@@ -1,8 +1,10 @@
 # Lego
 
+## fib_ex
+
 Extracts and decompresses .fib archives found in various Lego games.
 
-## Games Tested
+### Games Tested
 
 * LEGO Harry Potter: Years 1-4 (PSP)
 * LEGO Star Wars III: The Clone Wars (3DS/PSP)
@@ -13,7 +15,7 @@ Extracts and decompresses .fib archives found in various Lego games.
 * LEGO The Hobbit (3DS)
 * LEGO Batman 3: Beyond Gotham (3DS)
 
-## Notes
+### Notes
 
 Some games come with accompanying csv files that list filenames. If one is
 found, it will be used. Otherwise, the script will make a semi-educated guess
@@ -32,6 +34,10 @@ supported by [Scarlet](https://github.com/xdanieldzd/Scarlet) in the near future
 Audio data is assigned the extension .bwav—based on what I've seen, these are
 custom containers that store one or more Nintendo 3DS CWAV files and/or some
 form of PSP audio.
+
+## hog_ex
+
+Extracts and decompresses .hog archives found in various Lego games.
 
 ## Acknowledgements
 

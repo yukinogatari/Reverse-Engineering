@@ -7,7 +7,6 @@
 
 import os
 import csv
-from collections import defaultdict
 
 from util import *
 from fib_dec import fib_dec

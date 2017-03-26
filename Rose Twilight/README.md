@@ -1,12 +1,12 @@
 # Rose and the Old Castle of Twilight
 
-Mostly concerned with extracting data from [Rose and the Old Castle of Twilight](http://nippon1.jp/consumer/rose/), and will probably work with games that use similar formats, such as Yomawari.
+Mostly concerned with extracting data from [A Rose in the Twilight](http://nippon1.jp/consumer/rose/), and will probably work with games that use similar formats, such as Yomawari.
 
 `fad_ex.py` extracts and converts the graphics stored in .fad archives.
 
 ## Games Tested
 
-* Rose and the Old Castle of Twilight (Vita)
+* A Rose in the Twilight (JP, Vita)
 
 ## Notes
 
