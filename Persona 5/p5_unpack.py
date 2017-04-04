@@ -8,8 +8,9 @@
 import os
 from util import *
 
-GLH_MAGIC = "\x30\x48\x4C\x47" # "0HLG"
-GLZ_MAGIC = "\x30\x5A\x4C\x47" # "0ZLG"
+GLH_MAGIC = "0HLG"
+GLZ_MAGIC = "0ZLG"
+GHM_MAGIC = "0MHG"
 
 def glz_dec(data):
   data = bytearray(data)
@@ -82,14 +83,14 @@ def glh_unpack(data, dec = True):
   cmp_size = to_u32(data[0x10:0x14]) # Includes 0x20 header.
   # 0x14-0x20 = padding?
   
-  glz_data = data[0x20:]
+  glh_data = data[0x20:cmp_size]
   
-  if dec:
-    return glz_dec(glz_data)
+  if dec and glh_data[:0x04] == GLZ_MAGIC:
+    return glz_dec(glh_data)
   else:
-    return glz_data
+    return glh_data
 
-def p5_unpack(filename, dec = True):
+def p5_cutin_unpack(filename, dec = True):
   f = BinaryFile(filename, "rb")
   
   file_count = f.get_u32be()
@@ -113,15 +114,51 @@ def p5_unpack(filename, dec = True):
   
   f.close()
 
+def p5_eboot_ex(filename, out_dir = None):
+  out_dir = out_dir or os.path.splitext(filename)[0]
+  
+  with open(filename, "rb") as f:
+    data = f.read()
+  
+  try:
+    os.makedirs(out_dir)
+  except:
+    pass
+  
+  pos = 0
+  while True:
+    pos = data.find(GLH_MAGIC, pos)
+    
+    if pos == -1:
+      break
+    
+    # Peek at the data size.
+    glh_size = to_u32(data[pos + 0x10 : pos + 0x14])
+    glh_data = data[pos : pos + glh_size]
+    glh_data = glh_unpack(glh_data)
+    
+    if glh_data[:4] == "DDS\x20":
+      ext = ".dds"
+    else:
+      ext = ".dat"
+    
+    out_file = os.path.join(out_dir, "GLH_%08X%s" % (pos, ext))
+    
+    with open(out_file, "wb") as f:
+      f.write(glh_data)
+    
+    pos += 1
+
 if __name__ == "__main__":
   
-  dirname = u"cutin"
-  for fn in list_all_files(dirname):
-    if not os.path.splitext(fn)[1] in [u".000", u".001"]:
-      continue
+  # dirname = u"cutin"
+  # for fn in list_all_files(dirname):
+  #   if not os.path.splitext(fn)[1] in [u".000", u".001"]:
+  #     continue
     
-    print fn
-    p5_unpack(fn)
-    # print
+  #   print fn
+  #   p5_cutin_unpack(fn)
+  #   # print
+  p5_eboot_ex("EBOOT.BIN")
 
 ### EOF ###
