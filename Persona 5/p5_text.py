@@ -87,24 +87,66 @@ def bmd_dump_file(filename, out_file = None):
 
 def pak_dump(f, out_dir):
   
-  if f.read(3) == "\x00\x00\x00":
+  # Store our data size for sanity checking.
+  pos = f.tell()
+  f.seek(0, 2)
+  data_size = f.tell()
+  f.seek(pos)
+  
+  # Do some header checks since we have multiple different data types that use
+  # the same extensions.
+  peek = f.read(4)
+  f.seek(-4, 1)
+  
+  # Camera data, don't care.
+  if peek == "ECM\x01":
     return
   
-  f.seek(-3, 1)
+  # If it looks like a little-endian value, it's probably something else.
+  elif peek[3] == "\x00":
+    return
   
+  # This is hacky as fuck, but take care of some annoying bin files...
+  elif peek[:2] == "\x21\x03" or peek[:2] == "\x22\x03":
+    return
+  
+  # We have two types pak data in use, which are intermingled seemingly at
+  # random. What I'm calling the "compact" format has a file count at the start,
+  # filenames have a limit of 0x20 bytes, and stores data size useing big endian.
+  # The other type has no file count, uses 0xFC bytes for filenames, stores the
+  # data size in little endian, and aligns entries to multiples of 0x40.
+  # Because why the fuck not.
+  # 
+  # Assuming there are no paks with > 16777215 files in them, a pak with a null
+  # byte at the start can be safely considered compact.
+  compact = peek[0] == "\x00"
+  
+  if compact:
+    file_count = f.get_u32be()
+  
+  # Ignore the file count because only non-compact paks have it.
   while True:
-    filename = f.read(252).strip("\x00")
-    if not filename:
+    
+    fn_len = 0x20 if compact else 0xFC
+    filename = f.read(fn_len).strip("\x00")
+    
+    if not filename:# or f.tell() + 4 > data_size:
       break
     
-    filesize = f.get_u32()
+    # wtf
+    filesize = f.get_u32be() if compact else f.get_u32()
+    
+    if f.tell() + filesize > data_size or filesize == 0:
+      break
+    
     data = f.get_bin(filesize)
     
-    # Align to nearest multiple of 0x40
-    pos = f.tell()
-    if pos % 0x40:
-      pos = pos + 0x40 - (pos % 0x40)
-    f.seek(pos)
+    # Align to nearest multiple of 0x40, but only if not compact.
+    if not compact:
+      pos = f.tell()
+      if pos % 0x40:
+        pos = pos + 0x40 - (pos % 0x40)
+      f.seek(pos)
     
     out_file = os.path.join(out_dir, filename)
     out_file = os.path.normpath(out_file)
@@ -116,6 +158,11 @@ def pak_dump(f, out_dir):
       msgs = bmd_dump(data)
     elif ext == ".ftd":
       msgs = ftd_dump(data)
+    elif ext in [".pak", ".pac", ".bin"]:
+      print out_file
+      subdir = os.path.splitext(out_file)[0]
+      pak_dump(data, subdir)
+      continue
     else:
       continue
     
@@ -131,22 +178,42 @@ def ftd_dump(f):
     return []
   
   data_size = f.get_u32be()
-  unk3      = f.get_u16be()
+  ftd_type  = f.get_u16be()
   msg_count = f.get_u16be()
-  
-  msg_offs = []
-  for i in range(msg_count):
-    msg_offs.append(f.get_u32be())
-  
   msgs = []
-  for i, off in enumerate(msg_offs):
-    f.seek(off)
-    length = f.get_u8()
-    unk    = f.get_u8() # Always 1?
-    unk2   = f.get_u16() # Always 0?
-    msg    = parse_str(f.read(length))
-    if msg:
-      msgs.append((None, str(i), [msg]))
+  
+  if ftd_type == 0x00:
+    header_off = f.get_u32be()
+    f.seek(header_off)
+    
+    unk       = f.get_u32be()
+    data_size = f.get_u32be()
+    msg_count = f.get_u32be()
+    unk2      = f.get_u32be()
+    
+    if msg_count == 0:
+      return []
+    
+    length = data_size / msg_count
+    
+    for i in range(msg_count):
+      msg = parse_str(f.read(length), has_cmd = False)
+      if msg:
+        msgs.append((None, str(i), [msg]))
+  
+  elif ftd_type == 0x01:
+    msg_offs = []
+    for i in range(msg_count):
+      msg_offs.append(f.get_u32be())
+    
+    for i, off in enumerate(msg_offs):
+      f.seek(off)
+      length = f.get_u8()
+      unk    = f.get_u8() # Always 1?
+      unk2   = f.get_u16() # Always 0?
+      msg    = parse_str(f.read(length), has_cmd = False)
+      if msg:
+        msgs.append((None, str(i), [msg]))
   
   return msgs
 
@@ -273,7 +340,7 @@ def bmd_dump(f):
 UNMAPPED = defaultdict(int)
 CHAR_COUNT = 0
 
-def parse_str(bytes):
+def parse_str(bytes, has_cmd = True):
   global CHAR_COUNT
   
   bytes = bytearray(bytes)
@@ -285,7 +352,7 @@ def parse_str(bytes):
     p += 1
     
     # Command.
-    if b >= 0xF0:
+    if b >= 0xF0 and has_cmd:
       num_params = ((b & 0x0F) - 1) << 1
       params = bytes[p + 1 : p + num_params + 1]
       p += num_params + 1
@@ -299,11 +366,13 @@ def parse_str(bytes):
         cmd = cmd + params + "}"
         out.extend(cmd)
     
-    elif b == 0x00:
+    # If it's a control character (excluding line breaks and shit)
+    # it's probably data instead of text, so get out.
+    elif b in range(0x09) + range(0x0E, 0x20):
       break
     
     else:
-      if b >= 0x80:
+      if b >= 0x80 and p < len(bytes):
         b2 = bytes[p]
         p += 1
         char = (b, b2)
@@ -371,10 +440,14 @@ def merge_scripts():
 
 ################################################################################
 
+import operator
+
 if __name__ == "__main__":
-  import operator
-  
   INCLUDE_COMMANDS = False
+  
+  # merge_scripts()
+  # exit()
+  
   # in_dir = "p5us"
   # out_dir = "p5us-out"
   in_dir = "p5jp"
@@ -387,7 +460,7 @@ if __name__ == "__main__":
     
     ext = os.path.splitext(fn)[1].lower()
     
-    if not ext in [".bf", ".bmd", ".pak", ".pac"]:
+    if not ext in [".bf", ".bmd", ".pak", ".pac", ".bin"]:
       continue
     
     print fn
@@ -396,7 +469,7 @@ if __name__ == "__main__":
       bf_dump_file(fn, out_file + ext + ".txt")
     if ext == ".bmd":
       bmd_dump_file(fn, out_file + ext + ".txt")
-    if ext in [".pak", ".pac"]:
+    if ext in [".pak", ".pac", ".bin"]:
       pak_dump_file(fn, out_file)
   
   # unmapped = 0
