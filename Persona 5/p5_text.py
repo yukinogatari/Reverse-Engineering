@@ -45,15 +45,14 @@ def dump_messages(msgs, out_file):
       f.write("------------------------------------------------------------------------\n")
       f.write("ID:%d(%s)\n\n" % (i, name))
       
-      if not INCLUDE_COMMANDS:
-        strs = [re.sub(r"\{.*?\}", "", string) for string in strs]
-      
       strs = [str(string.strip("\n")) for string in strs]
       string = "\n\n".join(strs)
       string = string.decode("CP932", errors = "replace")
-      string = string.encode("UTF-8")
       
-      f.write(string)
+      if not INCLUDE_COMMANDS:
+        string = re.sub(ur"\{.*?\}", u"", string)
+      
+      f.write(string.encode("UTF-8"))
       f.write("\n")
 
 ################################################################################
@@ -379,8 +378,10 @@ def parse_str(bytes, has_cmd = True):
         
         if char in TRANSLATION_TABLE:
           char = TRANSLATION_TABLE[char]
+          # char = bytearray("0x%02X, 0x%02X -> " % char) + bytearray(TRANSLATION_TABLE[char]) + bytearray("\n")
         else:
           UNMAPPED[char] += 1
+          char = "[0x%02X, 0x%02X]" % char
           # print " * Unmapped: 0x%02X, 0x%02X" % char
         
         out.extend(char)
@@ -452,6 +453,8 @@ if __name__ == "__main__":
   # out_dir = "p5us-out"
   in_dir = "p5jp"
   out_dir = "p5jp-out"
+  # in_dir = "test"
+  # out_dir = "test"
   
   for fn in list_all_files(in_dir):
     out_file = fn[len(in_dir) + 1:]
