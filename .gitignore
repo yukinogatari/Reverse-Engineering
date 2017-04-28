@@ -59,3 +59,9 @@
 !/PARTICLE/util.py
 !/PARTICLE/epa_conv.py
 !/PARTICLE/lyrs_ex.py
+
+!/Level5/
+!/Level5/README.md
+!/Level5/util.py
+!/Level5/xpck_ex.py
+!/Level5/level5_dec.py
