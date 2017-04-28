@@ -50,7 +50,8 @@ def level5_dec(data):
   elif fmt & 0b010:
     if DEBUG:
       print "Huffman:"
-    dec = huffman_dec(data[4:], 4 if fmt == 0b010 else 8, dec_size)
+    bits = 8 if fmt == 0b011 else 4
+    dec = huffman_dec(data[4:], bits, dec_size)
   
   # LZSS.
   elif fmt & 0b001:
