@@ -63,5 +63,7 @@
 !/Level5/
 !/Level5/README.md
 !/Level5/util.py
+!/Level5/arc_ex.py
+!/Level5/xfsa_ex.py
 !/Level5/xpck_ex.py
 !/Level5/level5_dec.py

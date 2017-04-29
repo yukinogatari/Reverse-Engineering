@@ -53,7 +53,7 @@ class BinaryHelper(object):
     
     while True:
       ch = self.read(bytes_per_char)
-      if ch == "\x00" * bytes_per_char:
+      if ch == "\x00" * bytes_per_char or len(ch) < bytes_per_char:
         break
       else:
         bytes.append(ch)
