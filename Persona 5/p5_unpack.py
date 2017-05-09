@@ -94,17 +94,25 @@ def glh_unpack(data, dec = True):
     return glh_data
 
 def p5_cutin_unpack(filename, dec = True):
+  # There are a couple cutin files with invalid headers, so add a little bit of
+  # error checking so we can safely get through all the data.
+  filesize = os.stat(filename).st_size
+  
   f = BinaryFile(filename, "rb")
   
-  file_count = f.get_u32be()
+  item_count = f.get_u32be()
   
-  for i in range(file_count):
-    file_id   = f.get_u32be()
-    file_size = f.get_u32be()
-    file_data = f.read(file_size)
+  for i in range(item_count):
+    if f.tell() >= filesize - 8:
+      print "Not enough data to extract."
+      break
     
-    # print file_id, file_size
-    file_data = glh_unpack(file_data, dec = dec)
+    item_id   = f.get_u32be()
+    item_size = f.get_u32be()
+    item_data = f.read(item_size)
+    
+    # print item_id, item_size
+    item_data = glh_unpack(item_data, dec = dec)
     # print
     
     if dec:
@@ -113,7 +121,7 @@ def p5_cutin_unpack(filename, dec = True):
       out_file = filename + "-%d.dat" % i
     
     with open(out_file, "wb") as f2:
-      f2.write(file_data)
+      f2.write(item_data)
   
   f.close()
 
@@ -154,14 +162,14 @@ def p5_eboot_ex(filename, out_dir = None):
 
 if __name__ == "__main__":
   
-  # dirname = u"cutin"
-  # for fn in list_all_files(dirname):
-  #   if not os.path.splitext(fn)[1] in [u".000", u".001"]:
-  #     continue
+  dirname = u"cutin"
+  for fn in list_all_files(dirname):
+    if not os.path.splitext(fn)[1] in [u".000", u".001"]:
+      continue
     
-  #   print fn
-  #   p5_cutin_unpack(fn)
-  #   # print
-  p5_eboot_ex("EBOOT.BIN")
+    print fn
+    p5_cutin_unpack(fn)
+    # print
+  # p5_eboot_ex("EBOOT.BIN")
 
 ### EOF ###
