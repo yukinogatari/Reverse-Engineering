@@ -55,6 +55,43 @@ def epa_conv_data(data):
   width    = to_u32(data[8:12])
   height   = to_u32(data[12:16])
   
+  data     = data[16:]
+  palette  = None
+  
+  # Indexed RGB
+  if epa_type == 0:
+    palette = data[:768]
+    data    = data[768:]
+  
+  data = epa_dec(data, width)
+  
+  if epa_type == 0:
+    # Lazily convert from indexed form to RGB.
+    img_data = bytearray()
+    for p in data:
+      img_data += palette[p * 3 : p * 3 + 3]
+    img = Image.frombytes("RGB", (width, height), bytes(img_data), "raw", "RGB")
+  
+  else:
+    pixels = width * height
+    b = Image.frombytes("L", (width, height), bytes(data[:pixels]), "raw", "L")
+    g = Image.frombytes("L", (width, height), bytes(data[pixels : pixels * 2]), "raw", "L")
+    r = Image.frombytes("L", (width, height), bytes(data[pixels * 2 : pixels * 3]), "raw", "L")
+    
+    if epa_type == 1:
+      img = Image.merge("RGB", (r, g, b))
+    
+    elif epa_type == 2:
+      a = Image.frombytes("L", (width, height), bytes(data[pixels * 3 : pixels * 4]), "raw", "L")
+      img = Image.merge("RGBA", (r, g, b, a))
+    
+    else:
+      print "Unknown image format."
+  
+  return img
+
+def epa_dec(data, width):
+  
   offsets = {
     0x01: 1,
     0x04: 2,
@@ -77,7 +114,7 @@ def epa_conv_data(data):
   }
   
   res = bytearray()
-  p   = 16 # Header
+  p   = 0
   
   while p < len(data):
     
@@ -102,19 +139,7 @@ def epa_conv_data(data):
       res += data[p : p + b]
       p += b
   
-  pixels = width * height
-  
-  b = Image.frombytes("L", (width, height), bytes(res[:pixels]), "raw", "L")
-  g = Image.frombytes("L", (width, height), bytes(res[pixels : pixels * 2]), "raw", "L")
-  r = Image.frombytes("L", (width, height), bytes(res[pixels * 2 : pixels * 3]), "raw", "L")
-  
-  if epa_type == 1:
-    img = Image.merge("RGB", (r, g, b))
-  else:
-    a = Image.frombytes("L", (width, height), bytes(res[pixels * 3 : pixels * 4]), "raw", "L")
-    img = Image.merge("RGBA", (r, g, b, a))
-  
-  return img
+  return res
 
 if __name__ == "__main__":
   
