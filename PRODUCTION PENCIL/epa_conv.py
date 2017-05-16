@@ -17,20 +17,10 @@ EPA_MAGIC = "EP\x01\x01"
 
 def epa_conv(filename, out_file = None):
   
-  if out_file == None:
-    out_file = os.path.splitext(filename)[0] + ".png"
+  out_file = out_file or os.path.splitext(filename)[0] + ".png"
   
-  data = None
-  
-  with open(filename, "rb") as f:
-    
-    if not f.read(4) == EPA_MAGIC:
-      return False
-    
-    f.seek(0)
-    data = bytearray(f.read())
-    
-  img = epa_conv_data(data)
+  with BinaryFile(filename, "rb") as f:
+    img = epa_conv_data(f)
   
   if not img:
     return False
@@ -46,24 +36,22 @@ def epa_conv(filename, out_file = None):
 
 ################################################################################
   
-def epa_conv_data(data):
+def epa_conv_data(f):
   
-  if not data[:4] == EPA_MAGIC:
+  if not f.read(4) == EPA_MAGIC:
     return
   
-  epa_type = to_u32(data[4:8])
-  width    = to_u32(data[8:12])
-  height   = to_u32(data[12:16])
+  epa_type = f.get_u32()
+  width    = f.get_u32()
+  height   = f.get_u32()
   
-  data     = data[16:]
   palette  = None
   
   # Indexed RGB
   if epa_type == 0:
-    palette = data[:768]
-    data    = data[768:]
+    palette = f.read(768)
   
-  data = epa_dec(data, width)
+  data = epa_dec(f.read(), width)
   
   if epa_type == 0:
     # Lazily convert from indexed form to RGB.
@@ -90,6 +78,8 @@ def epa_conv_data(data):
   
   return img
 
+################################################################################
+
 def epa_dec(data, width):
   
   offsets = {
@@ -113,8 +103,9 @@ def epa_dec(data, width):
     0x0E: width * 3,
   }
   
-  res = bytearray()
-  p   = 0
+  data = bytearray(data)
+  res  = bytearray()
+  p    = 0
   
   while p < len(data):
     
@@ -141,10 +132,12 @@ def epa_dec(data, width):
   
   return res
 
+################################################################################
+
 if __name__ == "__main__":
   
-  for filename in os.listdir("graphic"):
-    print filename
-    epa_conv(os.path.join("graphic", filename))
+  for fn in list_all_files("graphic-lilycle"):
+    print fn
+    epa_conv(fn)
 
 ### EOF ###

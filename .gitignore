@@ -54,11 +54,12 @@
 !/Kogado/util.py
 !/Kogado/hypack_ex.py
 
-!/PARTICLE/
-!/PARTICLE/README.md
-!/PARTICLE/util.py
-!/PARTICLE/epa_conv.py
-!/PARTICLE/lyrs_ex.py
+!/PRODUCTION PENCIL/
+!/PRODUCTION PENCIL/README.md
+!/PRODUCTION PENCIL/util.py
+!/PRODUCTION PENCIL/epa_conv.py
+!/PRODUCTION PENCIL/pac2_ex.py
+!/PRODUCTION PENCIL/pjadv_dump.py
 
 !/Level5/
 !/Level5/README.md
