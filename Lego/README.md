@@ -14,6 +14,7 @@ Extracts and decompresses .fib archives found in various Lego games.
 * The LEGO Movie Videogame (Vita)
 * LEGO The Hobbit (3DS)
 * LEGO Batman 3: Beyond Gotham (3DS)
+* Spy Hunter (3DS)
 
 ### Notes
 

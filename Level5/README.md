@@ -7,6 +7,7 @@ Extracts a variety of archive formats used in games developed by Level-5.
 * Yo-kai Watch (3DS)
 * Professor Layton vs. Phoenix Wright: Ace Attorney (3DS)
 * Professor Layton and the Azran Legacy Demo (3DS)
+* The Snack World (3DS)
 
 ## xpck_ex.py
 

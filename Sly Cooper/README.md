@@ -5,6 +5,7 @@ Decompresses data found in the Sly Cooper games.
 ## Games Tested
 
 * Sly Cooper and the Thievius Raccoonus (Vita)
+* Sly 3: Honor Among Thieves (Vita)
 
 ## Notes
 
